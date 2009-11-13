@@ -1,0 +1,9 @@
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\GUI.dll
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\GUI.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\obj\Debug\ResolveAssemblyReference.cache
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\obj\Debug\GUI.dll
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\obj\Debug\GUI.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\Spring.Core.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\Apache.NMS.ActiveMQ.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\Spring.Messaging.Nms.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI\bin\Apache.NMS.pdb

@@ -1,0 +1,8 @@
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\bin\Debug\GUI.Tests.dll.config
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\bin\Debug\GUI.Tests.dll
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\bin\Debug\GUI.Tests.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\bin\Debug\GUI.dll
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\bin\Debug\GUI.pdb
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\obj\Debug\ResolveAssemblyReference.cache
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\obj\Debug\GUI.Tests.dll
+C:\GAProject\dgase\EaGUI\VS\GUI\GUI.Tests\obj\Debug\GUI.Tests.pdb
