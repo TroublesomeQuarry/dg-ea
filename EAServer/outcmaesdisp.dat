@@ -1,0 +1,19 @@
+ CMA-ES warning: File 'CMAEvolutionStrategy.properties' not found, no options read
+ CMA-ES error: dimension needs to be determined, use eg. setDimension() or setInitialX()
+(5,10)-CMA-ES(mu_eff=3.4), Ver="0.99.22", dimension=10, 0 diagonal iter., randomSeed=1257964628346 (Wed Nov 11 12:37:08 CST 2009)
+Iteration,#Fevals: rb Function Value Delta( best ,worst) |idx: Max SD idx: Min SD  | minsigD  sigma Axisratio | time, in eig
+    1(10),     10: 1.9451382000000000e+04 (+0e+00,9e+03) |  7: 7.5e-01  5: 7.3e-01 | 7.4e-01 7.4e-01   1.00   |  1.0  0.0 
+  100(10),   1001: 1.6414721400000000e+04 (-1e+01,3e+02) |  6: 1.4e-01  4: 7.9e-02 | 5.3e-02 1.3e-01   3.78   | 73.8  0.0 
+Terminated due to
+  MaxIter: maximum number of iterations reached (iter=100,eval=1000)
+best function value 16401.2808 at evaluation 845
+(5,10)-CMA-ES(mu_eff=3.4), Ver="0.99.22", dimension=10, 0 diagonal iter., randomSeed=1257965929081 (Wed Nov 11 12:58:49 CST 2009)
+Iteration,#Fevals: rb Function Value Delta( best ,worst) |idx: Max SD idx: Min SD  | minsigD  sigma Axisratio | time, in eig
+    1(10),     10: 1.9076070700000000e+04 (+0e+00,9e+03) |  1: 8.3e-01  2: 8.1e-01 | 8.2e-01 8.2e-01   1.00   |  1.0  0.0 
+  100(10),   1001: 1.6569042500000000e+04 (-3e+01,5e+01) |  3: 9.8e-02  6: 5.0e-02 | 3.6e-02 8.6e-02   3.22   | 72.0  0.0 
+Terminated due to
+  MaxIter: maximum number of iterations reached (iter=100,eval=1000)
+best function value 16542.571 at evaluation 870
+(5,10)-CMA-ES(mu_eff=3.4), Ver="0.99.22", dimension=10, 0 diagonal iter., randomSeed=1257966342696 (Wed Nov 11 13:05:42 CST 2009)
+Iteration,#Fevals: rb Function Value Delta( best ,worst) |idx: Max SD idx: Min SD  | minsigD  sigma Axisratio | time, in eig
+    1(10),     10: 2.0201428500000000e+04 (+0e+00,9e+03) |  5: 8.6e-01  4: 7.9e-01 | 8.0e-01 8.0e-01   1.00   |  1.1  0.0 
