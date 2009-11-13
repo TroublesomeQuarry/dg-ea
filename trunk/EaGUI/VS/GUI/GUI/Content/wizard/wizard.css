@@ -1,0 +1,10 @@
+
+
+
+
+/* BUTTONS */
+.buttons{overflow: hidden; width:100%}
+.buttons button{font-size:12px}
+.buttons img{height:8px; vertical-align:middle}
+.next {float:right; font-size:7px}
+.previous {float:left; font-size:7px}
