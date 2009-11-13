@@ -21,12 +21,77 @@
 	    #selectable .ui-selected { background: #F39814; color: white; }
 	    #selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
 	    #selectable li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
+	    .cSlider { padding-right:8px; vertical-align:bottom; text-align:right; float:right;  border-color:inherit; background-color:Transparent; color:#f6931f; font-weight:bold;}
+	    .ui-progressbar-value { background-image: url(/Content/css/ui-lightness/images/pbar-ani.gif); }
 	</style>
 
 <script type="text/javascript">
+
+    var text1 = "<b>Job History</b> - This shows recent and active jobs - you can click on 'details' to see charts showing information about the job "
+    var text2 = "<b>To create a new job</b> - select the type of problem to solve. Each of these problem types has certain characteristics that help us to defined part of the algorithm. Some of the parameters of the EA depend on the type of problem you select. "
+    var text3 = "<b>User options</b> - Here you can setup some defaults like the email address to send alerts to. "
+    var text4 = "<b>Factors</b> - Select the factors that you wish to find loads for. "
+    var text5 = "<b>Options</b> - You can override the default options here. "
+    var text6 = "<b>Notifications</b> - The email address to send alerts to and the events you want to receive alerts for "
+    var text7 = "<b>Confirm</b> - Look over you selection and click finish to submit the job. "
+    
     var _job_Id;
     var _problem_Id;
+    var factorNameArray;
     $(function() {
+
+        $.extend($.ui.slider.defaults, {
+            range: "min",
+            animate: true,
+            orientation: "horizontal"
+        });
+
+        $("#progressbar").progressbar({
+            value: 59
+        });        
+
+        $("#sliderPopSize").slider({
+            max: 200,
+            value: 50,
+            slide: function(event, ui) {
+                $("#PopSizeValue").val(ui.value);
+            }
+        });
+
+        $("#sliderTimeLimit").slider({
+            max: 180,
+            value: 60,
+            slide: function(event, ui) {
+                $("#TimeLimitValue").val(ui.value);
+            }
+
+        });
+
+        $("#sliderGenerationDev").slider({
+            max: 100,
+            value: 50,
+            slide: function(event, ui) {
+                $("#GenerationDevValue").val(ui.value);
+            }
+        });
+
+        $("#sliderOptimalValue").slider({
+            max: 4000,
+            value: 3000,
+            slide: function(event, ui) {
+                $("#OptimalValue").val(ui.value);
+            }
+        });
+
+
+        $("#JobInfoDialog").dialog({
+            bgiframe: true,
+            height: 400,
+            width: 800,
+            modal: true,
+            autoOpen: false
+        });
+
         $("#accordion").accordion({ header: "h3", autoHeight: false });
 
         $('#accordion').bind('accordionchange', function(event, ui) {
@@ -35,11 +100,14 @@
             var other = $('#tabs').tabs('option', 'selected');
 
             switch (active) {
+                case 0:
+                    $("#draggable").html("<span class='red'>" + text1 + "</span>");
+                    break;
                 case 1:
-                    $("#draggable").html("<span class='red'>Hello <b>Again</b> " + other + "</span>");
+                    $("#draggable").html("<span class='red'>" + text2 + "</span>");
                     break;
                 case 2:
-                    $("#draggable").html("<span class='red'>Hello <b>there</b></span>");
+                    $("#draggable").html("<span class='red'>" + text3 + "</span>");
                     break;
                 default:
                     $("#draggable").html(active);
@@ -73,11 +141,54 @@
             var active = ui.index;
 
             switch (active) {
+                case 0:
+                    $("#draggable").html("<span class='red'>" + text2 + "</span>");
+                    break;
                 case 1:
-                    $("#draggable").html("<span class='red'>Hello <b>other</b></span>");
+                    $("#draggable").html("<span class='red'>" + text4 + "</span>");
                     break;
                 case 2:
-                    $("#draggable").html("<span class='red'>Hello <b>more</b></span>");
+                    $("#draggable").html("<span class='red'>" + text5 + "</span>");
+                    break;
+                case 3:
+                    $("#draggable").html("<span class='red'>" + text6 + "</span>");
+                    break;
+                case 4:
+                    $("#draggable").html("<span class='red'>" + text7 + "</span>");
+                    var stext = "<table><tr>";
+                    stext += "<td>";
+                    stext += "Problem Type:";
+                    stext += "</td>";
+                    stext += "<td>";
+                    stext += _job_Id;
+                    stext += "</td>";
+                    stext += "</tr>";
+                    stext += "<tr>";
+                    stext += "<td valign='top'>";
+                    stext += "Factors:";
+                    stext += "</td>";
+                    stext += "<td valign='top'>";
+
+                    var data = $("input[iType='data']:checked");
+                    $.each(data, function(t, item) {
+                        stext += $(item).attr('factorName') + "<br/>";
+                    });
+                    stext += "</td>";
+                    stext += "</tr>";
+                    stext += "<tr>";
+                    stext += "<td valign='top'>";
+                    stext += "Options:";
+                    stext += "</td>";
+                    stext += "<td valign='top'>";
+
+                    var data = $("input[iType='option']:checked");
+                    $.each(data, function(t, item) {
+                        stext += $(item).attr('optionName') + "<br/>";
+                    });
+                    stext += "</td>";
+                    stext += "</tr></table>";
+
+                    $("#tabs5Content").html("<span class='red'>" + stext + "</span>");
                     break;
                 default:
                     $("#draggable").html(active);
@@ -89,25 +200,25 @@
 
 
 
-        $.getJSON("/Job?sd",
+        $.getJSON("/Job?sdh",
                 function(data) {
 
                     $.each(data, function(t, item) {
-                        if (isNewCategory(item.ProblemName)) {
-                            $('#selectable').append("<li job_Id='0' class='ui-widget-content'>Blank " + item.ProblemName + "</li>");
-                        };
+//                        if (isNewCategory(item.ProblemName)) {
+//                            $('#selectable').append("<li job_Id='0' class='ui-widget-content'>Blank " + item.ProblemName + "</li>");
+//                        };
 
-                        $('#selectable').append("<li problem_Id='" + item.Problem_Id + "' job_Id='" + item.Job_Id + "' class='ui-widget-content'>" + item.JobName + "</li>");
+                        $('#selectable').append("<li  problemName='" + item.JobName + "' problem_Id='" + item.Problem_Id + "' job_Id='" + item.Job_Id + "' class='ui-widget-content'>" + item.JobName + "</li>");
                     });
 
                 });
 
-        $.getJSON("/Option",
-        function(data) {
-            $.each(data, function(t, item) {
-            $("#tabs3Content").append("<INPUT iType='option' class='optionInput' TYPE=CHECKBOX NAME='chk" + item.Option_Id + "'/>" + item.Name + ' ' + item.CategoryName + "<br/>");
-            });
-        });
+        //        $.getJSON("/Option",
+        //        function(data) {
+        //            $.each(data, function(t, item) {
+        //            $("#tabs3Content").append("<INPUT iType='option' optionName='" + item.Name + "'  class='optionInput' TYPE=CHECKBOX NAME='chk" + item.Option_Id + "'/>" + item.Name + ' ' + item.CategoryName + "<br/>");
+        //            });
+        //        });
 
 
 
@@ -199,14 +310,15 @@
                         if (categoryHeader != "")
                             j = 0;
                         if (j % 2 == 0)
-                            $("#" + ws(item.DataGroupName) + "left").append("<INPUT iType='data' TYPE=CHECKBOX NAME='chk" + item.DataElement_Id + "'/>" + item.DataElementName + "<br/>");
+                            $("#" + ws(item.DataGroupName) + "left").append("<INPUT factorName='" + item.DataElementName + "' iType='data' TYPE=CHECKBOX NAME='chk" + item.DataElement_Id + "'/>" + item.DataElementName + "<br/>");
                         else
-                            $("#" + ws(item.DataGroupName) + "right").append("<INPUT iType='data' TYPE=CHECKBOX NAME='chk" + item.DataElement_Id + "'/>" + item.DataElementName + "<br/>");
+                            $("#" + ws(item.DataGroupName) + "right").append("<INPUT factorName='" + item.DataElementName + "' iType='data' TYPE=CHECKBOX NAME='chk" + item.DataElement_Id + "'/>" + item.DataElementName + "<br/>");
                         j++;
                     });
                 });
     }
 
+   
     function submitJob() {
         alert('here');
 
@@ -214,31 +326,39 @@
         $.each(data, function(t, item) {
         alert($(item).attr('iType'));
         });
-          
-       
 
+
+
+    }
+
+    function doDetails(jobID) {
+
+ 
+        $("#JobInfoDialog").dialog("open");
+        
     }
     
 </script>
 
 
 <h2>Welcome</h2>
+This tool allows you to find the loads for each of the factors in the quantitive models.
 		<div id="accordion">
 			<div>
 
-				<h3><a href="#">Active Jobs</a></h3>
+				<h3><a href="#">Job History</a></h3>
 				<div>
                      <table>
                                 <tr>
                                     <th></th>
                                     <th>
-                                        Job_Id
+                                        Id
                                     </th>
                                     <th>
                                         Name
                                     </th>
                                     <th>
-                                        IsTemplate
+                                        Template?
                                     </th>
                                 </tr>
 
@@ -246,8 +366,9 @@
                             
                                 <tr>
                                     <td>
-                                        <%= Html.ActionLink("Edit", "Edit", new { id=item.Job_Id }) %> |
-                                        <%= Html.ActionLink("Details", "Details", new { id=item.Job_Id })%>
+                                       <%-- <%= Html.ActionLink("Edit", "Edit", new { id=item.Job_Id }) %> |--%>
+                                       <a href="JavaScript:doDetails('<%=Html.Encode(item.Job_Id)%>')">Details</a>
+                                        <%--<%= Html.ActionLink("Details", "Details", new { id=item.Job_Id })%>--%>
                                     </td>
                                     <td>
                                         <%= Html.Encode(item.Job_Id) %>
@@ -300,6 +421,31 @@
 			            </div>
 			            <div id="tabs-3">
 			                <div id="tabs3Content">
+			                <table  style="width:500px">
+			                    <tr>
+			                        <td colspan="2">
+			                            <table width="100%"><tr><td>Population Size</td><td align=right><input  value="50" style="width:40px;border:0;" type="text" id="PopSizeValue" class="cSlider"  /></td></tr></table>
+			                        </td>			                        
+			                    </tr>
+			                    <tr>
+			                        <td colspan="2">
+			                            <div id="sliderPopSize"></div>
+			                        </td>			                        
+			                    </tr>		
+			                    <tr>
+			                        <td valign="top">
+			                            Termination:
+			                        </td>	
+			                        <td valign="top">
+			                            <table width="100%"><tr><td>Time Limit (mins)</td><td align=right><input  value="60" style="width:40px;border:0;" type="text" id="TimeLimitValue" class="cSlider"  /></td></tr></table>			                           
+			                            <div id="sliderTimeLimit"></div>	
+			                            <table width="100%"><tr><td>Generation Deviation</td><td align=right><input  value="50" style="width:40px;border:0;" type="text" id="GenerationDevValue" class="cSlider"  /></td></tr></table>		                            
+			                            <div id="sliderGenerationDev"></div>
+			                            <table width="100%"><tr><td>Optimal Value</td><td align=right><input  value="300" style="width:40px;border:0;" type="text" id="OptimalValue" class="cSlider"  /></td></tr></table>
+			                            <div id="sliderOptimalValue"></div>		                            
+			                        </td>			                        		                        
+			                    </tr>              
+			                </table>
 			                </div>	  			            			            
 			                <div class="buttons">
                               <button type="submit" class="previous" onclick="loadnext(2,1);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
@@ -308,6 +454,23 @@
 			            </div>
 			            <div id="tabs-4">
 			                <div id="tabs4Content">
+				 
+				                <table>
+				                    <tr>
+				                        <td>Email address:</td>
+				                        <td><input type="text" name="defaultEmail" /></td>
+				                    </tr>
+				                    <tr>
+				                        <td valign="top">Events:</td>
+				                        <td valign="top">
+				                            <input type="checkbox" name="onError" /> Error
+				                            <br /><input type="checkbox" name="onError" /> Complete
+				                            <br /><input type="checkbox" name="onError" /> Overrun
+            				                
+				                       </td>
+				                    </tr>				        
+				                </table>				  
+				  			                
 			                </div>	  			            			            			            
                             <div class="buttons">
                               <button type="submit" class="previous" onclick="loadnext(3,2);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
@@ -328,20 +491,30 @@
 
 			<div>
 				<h3><a href="#">User Options</a></h3>
-				                                          
-			            
-			            
+				  <div>
+				    <table>
+				        <tr>
+				            <td>Default Email address:</td>
+				            <td><input type="text" name="defaultEmail" /></td>
+				        </tr>
+				    </table>				  
+				  </div>                                        			            			            
 			</div>
 			</div>
 	
 
 
-<div id="draggable" class="ui-widget-content">
-	<p>Drag me around</p>
+<div id="draggable" style="height:500px" class="ui-widget-content">
+	<p><b>Job History</b> - This shows recent and active jobs - you can click on 'details' to see charts showing information about the job.</p>
 </div>
 
 
+<div id="JobInfoDialog" title="Job Information">
+	<p>Adding the modal overlay screen makes the dialog look more prominent because it dims out the page content.</p>
+<div id="progressbar"></div>
 
+</div>	
+</div>
 
 </asp:Content>
 

@@ -15,12 +15,12 @@
 
         <div id="header">
             <div id="title">
-                <h1>My MVC Application</h1>
+                <h1>Evolutionary Algorithms</h1>
             </div>
               
-            <div id="logindisplay">
+<%--            <div id="logindisplay">
                 <% Html.RenderPartial("LogOnUserControl"); %>
-            </div> 
+            </div> --%>
             
             <div id="menucontainer">
             
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div id="main">
+        <div id="main" style="height:100%" >
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
 
             <div id="footer">
