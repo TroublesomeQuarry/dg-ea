@@ -79,22 +79,23 @@ public class MessageServer implements MessageListener {
     public void onMessage(Message request) {
     	System.out.println("got message");
         try {
-            MapMessage response = this.session.createMapMessage();
+
             if (request instanceof MapMessage) {
             	MapMessage req = (MapMessage) request;
-                this.messageProtocol.handleProtocolMessage(req, response);
-                System.out.println("message status " + response.getString("STATUS"));
-                System.out.println("message body " + response.getString("BODY"));
+                Message response = this.messageProtocol.handleProtocolMessage(req, this.session);
+                //System.out.println("message status " + response.getString("STATUS"));
+               // System.out.println("message body " + response.getString("BODY"));
+                response.setJMSCorrelationID(request.getJMSCorrelationID());
+
+                //Send the response to the Destination specified by the JMSReplyTo field of the received message,
+                //this is presumably a temporary queue created by the client
+                this.replyProducer.send(request.getJMSReplyTo(), response);                
             }
 
             //Set the correlation ID  from the received message to be the correlation id of the response message
             //this lets the client identify which message this is a response to if it has more than
             //one outstanding message to the server
-            response.setJMSCorrelationID(request.getJMSCorrelationID());
 
-            //Send the response to the Destination specified by the JMSReplyTo field of the received message,
-            //this is presumably a temporary queue created by the client
-            this.replyProducer.send(request.getJMSReplyTo(), response);
         } catch (JMSException e) {
         	e.printStackTrace();
         }

@@ -20,11 +20,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import cma.CMAEvolutionStrategy;
-
+import org.apache.commons.math.stat.descriptive.*;
 
 public class EvolutionState {
 	
 	public Document document;
+	public String status;
+	
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public String resultsFileName = "C:\\ResultsXML.xml";
 	
 	public EvolutionState(){
@@ -58,15 +69,29 @@ public class EvolutionState {
 		// be certain to call the hook on super!
 		Runtime r = Runtime.getRuntime();
 		long curU = r.totalMemory() - r.freeMemory();
-
+		
+		DescriptiveStatistics statistics = DescriptiveStatistics.newInstance();
+		
+		double[] fitness = cmaes.getRawFitness();
+		for(int i=0; i < fitness.length; i++){
+			statistics.addValue(fitness[i]);
+		}
+		
 		Element genStat = document.createElement("genStat");
 		genStat.setAttribute("EvalNum", String.valueOf(cmaes.getCountEval()));
-		genStat.setAttribute("max", String.valueOf(cmaes.getBestFunctionValue()));
-		genStat.setAttribute("Latest", String.valueOf(cmaes.getBestRecentFunctionValue()));
-		genStat.setAttribute("StdDev", String.valueOf(cmaes.getMeanX()));
-		genStat.setAttribute("Best", String.valueOf(cmaes.getBestX()));
+		genStat.setAttribute("Iteration", String.valueOf(cmaes.getCountIter()));
+		genStat.setAttribute("Max", String.valueOf(statistics.getMax()));
+		genStat.setAttribute("Min", String.valueOf(statistics.getMin()));
+		genStat.setAttribute("Mean", String.valueOf(statistics.getMean()));
+		genStat.setAttribute("StdDev", String.valueOf(statistics.getStandardDeviation()));
+		genStat.setAttribute("Variance", String.valueOf(statistics.getVariance()));
+		//genStat.setAttribute("Best", String.valueOf(Util.IndividualToString(cmaes.getBestX())));
+		
+		
+		//genStat.setAttribute("StdDev", String.valueOf(Util.IndividualToString(cmaes.getMeanX())));
+		//genStat.setAttribute("Best", String.valueOf(Util.IndividualToString(cmaes.getBestX())));
 		document.getDocumentElement().appendChild(genStat);
-		System.out.println("writing stats ");
+		//System.out.println("writing stats ");
 		// print out best genome #3 individual in subpop 0
 		/*
 		 * int best = 0; double best_val = ((DoubleVectorIndividual)
@@ -88,21 +113,21 @@ public class EvolutionState {
 	public void finalStatistics(final CMAEvolutionStrategy cmaes) {
 
 		
-		Element finalStat = document.createElement("finalStat");
+	//	Element finalStat = document.createElement("finalStat");
 
 
 		
 	
 			
-		finalStat.setAttribute("bestFittness", String.valueOf(cmaes.getBestEvaluationNumber()));
-		finalStat.setAttribute("bestIndividual", String.valueOf(cmaes.getBestSolution().getFitness()));
+	//	finalStat.setAttribute("bestFittness", String.valueOf(cmaes.getBestEvaluationNumber()));
+	//	finalStat.setAttribute("bestIndividual", String.valueOf(cmaes.getBestSolution().getFitness()));
 		
 
 	
 		
-		document.getDocumentElement().appendChild(finalStat);
+	//	document.getDocumentElement().appendChild(finalStat);
 		
-		writeXmlFile(document, resultsFileName );
+	//	writeXmlFile(document, resultsFileName );
 	}	
 	
     public static void writeXmlFile(Document doc, String filename) {

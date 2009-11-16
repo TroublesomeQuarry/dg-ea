@@ -26,7 +26,15 @@ public class EaServer {
 	}
 	
 	public String GetStatus(String jobName){
-		return instances.get(jobName).getStatus();
+		if(instances.containsKey(jobName))
+		{
+			if(instances.get(jobName).getState()!=null)
+				return instances.get(jobName).getState().getStatus();
+			else
+				return "starting";
+		}
+		else
+			return "orphan";		
 	}
 	
 	public String GetStatus(){
@@ -44,7 +52,7 @@ public class EaServer {
 	public String GetStatistics(String jobName){
 		boolean doesExists = false;
 		if(instances.containsKey(jobName)){
-			return instances.get(jobName).getState().document.getDocumentElement().toString();
+			return Util.DocToString(instances.get(jobName).getState().document);
 		
 					
 		}
