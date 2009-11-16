@@ -56,14 +56,17 @@ namespace GUI.Controllers
             {
                 if (String.IsNullOrEmpty(j.Status) || (!j.Status.Equals("Complete") && !j.Status.Equals("Orphan")))
                 {
+                    try
+                    {
+                        //IMapMessage mapMessage = messaging.RequestMap(j.Name, "GetStatus", "");
+                        //String status = mapMessage.Body.GetString("BODY");
+                        //j.Status = status;
+                        //if (status.Equals("Complete"))
+                        //    j.EndTime = DateTime.Now;
 
-                    IMapMessage mapMessage = messaging.RequestMap(j.Name, "GetStatus", "");
-                    String status = mapMessage.Body.GetString("BODY");
-                    j.Status = status;
-                    if (status.Equals("Complete"))
-                        j.EndTime = DateTime.Now;
- 
-                    _jobRepository.UpdateJob(j);
+                        //_jobRepository.UpdateJob(j);
+                    }
+                    catch { }
                 }
 
             }
