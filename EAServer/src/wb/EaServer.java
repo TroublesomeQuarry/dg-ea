@@ -14,7 +14,7 @@ public class EaServer {
 	}
 	
 	public void AddJob(String params, String jobName){
-		String paramsFilePath = Util.WirteParamsFile(params,jobName);
+		String paramsFilePath = "";
 		instances.put(jobName, new EaInstance(paramsFilePath,jobName,Util.GetSeed()));
 		System.out.println("starting1 instance ");
 		instances.get(jobName).spawnPlayThread();

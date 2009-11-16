@@ -1,8 +1,13 @@
 package wb;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
+import java.net.URL;
+import java.util.Properties;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -65,4 +70,37 @@ public class Util {
     	return s;
     }
 
+	public static void createParameterFile(String xml, String xsltPath, String outPath) throws Exception {
+
+        File xmlFile = new File(xml);
+        File xsltFile = new File(xsltPath);
+
+        // JAXP reads data using the Source interface
+        Source xmlSource = new StreamSource(xmlFile);
+        Source xsltSource = new StreamSource(xsltFile);
+
+        // the factory pattern supports different XSLT processors
+        TransformerFactory transFact =
+                TransformerFactory.newInstance();
+        Transformer trans = transFact.newTransformer(xsltSource);
+
+        trans.transform(xmlSource, new StreamResult(outPath));
+    }
+	
+	public static String getConfigProperty(String name){
+		
+		Properties configFile = new Properties();
+		try {
+			URL url = ClassLoader.getSystemResource("config.properties"); 		
+			configFile.load(url.openStream());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return configFile.getProperty(name);
+
+	}
 }
