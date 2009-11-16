@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Database Name="EaGUI" EntityNamespace="GUI.Model" ContextNamespace="GUI" Class="DB" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=.;Initial Catalog=EaGUI;Persist Security Info=True;User ID=gui" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="EaGUIConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="WebSettings" ConnectionString="Data Source=.;Initial Catalog=EaGUI;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="EaGUIConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.DataElements" Member="DataElements">
     <Type Name="DataElement">
       <Column Name="DataElement_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -19,9 +19,9 @@
       <Column Name="Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="Description" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
       <Column Name="Problem_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Association Name="Problem_Job" Member="Jobs" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Job" />
       <Association Name="Problem_Option" Member="Options" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Option" />
       <Association Name="Problem_Problem_DataElement" Member="Problem_DataElements" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Problem_DataElement" />
+      <Association Name="Problem_Job" Member="Jobs" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Job" />
     </Type>
   </Table>
   <Table Name="dbo.DataGroup_Element" Member="DataGroup_Elements">
@@ -69,8 +69,8 @@
       <Column Name="String_Value" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="Float_Value" Type="System.Double" DbType="Float" CanBeNull="true" />
       <Column Name="Bit_Value" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Association Name="Job_Job_Option" Member="Job" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job" IsForeignKey="true" />
       <Association Name="Option_Job_Option" Member="Option" ThisKey="Option_Id" OtherKey="Option_Id" Type="Option" IsForeignKey="true" />
+      <Association Name="Job_Job_Option" Member="Job" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.JobHistory" Member="JobHistories">
@@ -81,18 +81,6 @@
       <Column Name="Job_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Username" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Association Name="Job_JobHistory" Member="Job" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Jobs" Member="Jobs">
-    <Type Name="Job">
-      <Column Name="Job_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="IsTemplate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="Problem_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Association Name="Job_Job_DataElement" Member="Job_DataElements" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job_DataElement" />
-      <Association Name="Job_Job_Option" Member="Job_Options" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job_Option" />
-      <Association Name="Job_JobHistory" Member="JobHistories" ThisKey="Job_Id" OtherKey="Job_Id" Type="JobHistory" />
-      <Association Name="Problem_Job" Member="Problem" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Problem" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.OptionCategories" Member="OptionCategories">
@@ -125,6 +113,24 @@
       <Column Name="DataElement_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Association Name="DataElement_Problem_DataElement" Member="DataElement" ThisKey="DataElement_Id" OtherKey="DataElement_Id" Type="DataElement" IsForeignKey="true" />
       <Association Name="Problem_Problem_DataElement" Member="Problem" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Problem" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Jobs" Member="Jobs">
+    <Type Name="Job">
+      <Column Name="Job_Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsTemplate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Problem_Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Stats" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Parameters" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Status" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Association Name="Job_Job_DataElement" Member="Job_DataElements" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job_DataElement" />
+      <Association Name="Job_Job_Option" Member="Job_Options" ThisKey="Job_Id" OtherKey="Job_Id" Type="Job_Option" />
+      <Association Name="Job_JobHistory" Member="JobHistories" ThisKey="Job_Id" OtherKey="Job_Id" Type="JobHistory" />
+      <Association Name="Problem_Job" Member="Problem" ThisKey="Problem_Id" OtherKey="Problem_Id" Type="Problem" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

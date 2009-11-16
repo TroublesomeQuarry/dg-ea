@@ -37,6 +37,7 @@
     
     var _job_Id;
     var _problem_Id;
+    var _problemName;
     var factorNameArray;
     $(function() {
 
@@ -46,15 +47,26 @@
             orientation: "horizontal"
         });
 
-        $("#progressbar").progressbar({
-            value: 59
-        });        
+//        $("#progressbar").progressbar({
+//            value: 59
+//        });        
 
         $("#sliderPopSize").slider({
             max: 200,
             value: 50,
             slide: function(event, ui) {
-                $("#PopSizeValue").val(ui.value);
+            $("#PopSizeValue").val(ui.value);
+            $('#sliderEvaluations').slider('option', 'max', ui.value * 100);
+            $('#sliderEvaluations').slider('option', 'value', ui.value * 10);
+            $("#EvaluationsValue").val(ui.value * 10);
+            }
+        });
+
+        $("#sliderEvaluations").slider({
+            max:20000,
+            value: 500,
+            slide: function(event, ui) {
+            $("#EvaluationsValue").val(ui.value);
             }
         });
 
@@ -86,7 +98,7 @@
 
         $("#JobInfoDialog").dialog({
             bgiframe: true,
-            height: 400,
+            height: 500,
             width: 800,
             modal: true,
             autoOpen: false
@@ -122,6 +134,7 @@
             selected: function(event, ui) {
                 _job_Id = $(ui.selected).attr('job_Id');
                 _problem_Id = $(ui.selected).attr('problem_Id');
+                _problemName = $(ui.selected).attr('problemName');
                 updateDataTab(_job_Id);
                 $('#tab1Next').attr({ disabled: false });
             }
@@ -160,7 +173,7 @@
                     stext += "Problem Type:";
                     stext += "</td>";
                     stext += "<td>";
-                    stext += _job_Id;
+                    stext += _problemName;
                     stext += "</td>";
                     stext += "</tr>";
                     stext += "<tr>";
@@ -181,10 +194,22 @@
                     stext += "</td>";
                     stext += "<td valign='top'>";
 
-                    var data = $("input[iType='option']:checked");
+                    var data = $("input[iType='option']");
                     $.each(data, function(t, item) {
                         stext += $(item).attr('optionName') + "<br/>";
                     });
+                    stext += "</td>";
+                    stext += "</tr>";
+                    stext += "<tr>";
+                    stext += "<td valign='top'>";
+                    stext += "Notifications:";
+                    stext += "</td>";
+                    stext += "<td valign='top'>";
+                    stext += $("#notificationEmail").val() + "<br/>";
+                    var data = $("input[iType='event']:checked");
+                    $.each(data, function(t, item) {
+                        stext += $(item).attr('itemName') + "<br/>";
+                    });                    
                     stext += "</td>";
                     stext += "</tr></table>";
 
@@ -320,27 +345,34 @@
 
    
     function submitJob() {
-        alert('here');
-
-        var data = $("input:checked");
-        $.each(data, function(t, item) {
-        alert($(item).attr('iType'));
-        });
-
-
-
+       $("newJob").submit();
     }
 
     function doDetails(jobID) {
 
- 
+//        $.get("/Job/Details/" + jobID, {cache: false}, function(data) {
+//            alert("Data Loaded: " + data);
+//        });
+
+        $.ajax({
+            url: "/Job/Details/" + jobID,
+            cache: false,
+            success: function(data) {
+            $("#jobDetails").html(data);
+              
+            }
+        });
+
+
+       // $("#jobDetails").load("/Job/Details/" + jobID, {cache: false} );
+
         $("#JobInfoDialog").dialog("open");
         
     }
     
 </script>
 
-
+<form method="post" id="newJob" name="newJob" action="/Job/Create">
 <h2>Welcome</h2>
 This tool allows you to find the loads for each of the factors in the quantitive models.
 		<div id="accordion">
@@ -352,36 +384,52 @@ This tool allows you to find the loads for each of the factors in the quantitive
                                 <tr>
                                     <th></th>
                                     <th>
-                                        Id
+                                        ID
                                     </th>
                                     <th>
                                         Name
                                     </th>
                                     <th>
-                                        Template?
+                                        Start Time
+                                    </th>   
+                                    <th>
+                                        End Time
+                                    </th>                                                                      
+                                    <th>
+                                        Status
                                     </th>
                                 </tr>
 
-                            <% foreach (var item in Model) { %>
+                            <% foreach (var item in Model) {
+                                   if (item.IsTemplate == false)
+                                   {
+                                   %>
                             
-                                <tr>
-                                    <td>
-                                       <%-- <%= Html.ActionLink("Edit", "Edit", new { id=item.Job_Id }) %> |--%>
-                                       <a href="JavaScript:doDetails('<%=Html.Encode(item.Job_Id)%>')">Details</a>
-                                        <%--<%= Html.ActionLink("Details", "Details", new { id=item.Job_Id })%>--%>
-                                    </td>
-                                    <td>
-                                        <%= Html.Encode(item.Job_Id) %>
-                                    </td>
-                                    <td>
-                                        <%= Html.Encode(item.Name) %>
-                                    </td>
-                                    <td>
-                                        <%= Html.Encode(item.IsTemplate) %>
-                                    </td>
-                                </tr>
-                            
-                            <% } %>
+                                        <tr>
+                                            <td>
+                                               <%-- <%= Html.ActionLink("Edit", "Edit", new { id=item.Job_Id }) %> |--%>
+                                               <a href="JavaScript:doDetails('<%=Html.Encode(item.Job_Id)%>')">Details</a>
+                                                <%--<%= Html.ActionLink("Details", "Details", new { id=item.Job_Id })%>--%>
+                                            </td>
+                                            <td>
+                                                <%= Html.Encode(item.Job_Id)%>
+                                            </td>
+                                            <td>
+                                                <%= Html.Encode(item.Name)%>
+                                            </td>
+                                            <td>
+                                                <%= Html.Encode(item.StartTime)%>
+                                            </td>
+                                            <td>
+                                                <%= Html.Encode(item.EndTime)%>
+                                            </td>    
+                                            <td>
+                                                <%= Html.Encode(item.Status)%>
+                                            </td>                                                                      
+                                        </tr>
+                                    
+                                    <% }
+                               } %>
 
                       </table>   				
 				</div>
@@ -406,17 +454,17 @@ This tool allows you to find the loads for each of the factors in the quantitive
 		                
 			                </div>				            
 			                <div class="buttons">
-                                <button type="submit" class="previous"  disabled="disabled"> <img src="/Content/wizard/images/arrow_left.png" alt=""/> Back </button>
+                                <button  class="previous"  disabled="disabled"> <img src="/Content/wizard/images/arrow_left.png" alt=""/> Back </button>
                                
-                                <button type="submit" class="next" disabled="disabled" id="tab1Next"  onclick="loadnext(0,1);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                                <button  class="next" disabled="disabled" id="tab1Next"  onclick="loadnext(0,1);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
                         </div>
 			            <div id="tabs-2">
 			                <div id="tabs2Content">
 			                </div>	           
 			                <div class="buttons">
-                              <button type="submit" class="previous" onclick="loadnext(1,0);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button type="submit" class="next" onclick="loadnext(1,2);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button  class="previous" onclick="loadnext(1,0);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button  class="next" onclick="loadnext(1,2);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-3">
@@ -424,7 +472,7 @@ This tool allows you to find the loads for each of the factors in the quantitive
 			                <table  style="width:500px">
 			                    <tr>
 			                        <td colspan="2">
-			                            <table width="100%"><tr><td>Population Size</td><td align=right><input  value="50" style="width:40px;border:0;" type="text" id="PopSizeValue" class="cSlider"  /></td></tr></table>
+			                            <table width="100%"><tr><td>Population Size</td><td align=right><input iType='option' optionName='Population Size' value="50" style="width:40px;border:0;" type="text" name="PopSizeValue" id="PopSizeValue" class="cSlider"  /></td></tr></table>
 			                        </td>			                        
 			                    </tr>
 			                    <tr>
@@ -437,19 +485,22 @@ This tool allows you to find the loads for each of the factors in the quantitive
 			                            Termination:
 			                        </td>	
 			                        <td valign="top">
-			                            <table width="100%"><tr><td>Time Limit (mins)</td><td align=right><input  value="60" style="width:40px;border:0;" type="text" id="TimeLimitValue" class="cSlider"  /></td></tr></table>			                           
+		
+			                            <table width="100%"><tr><td>Evaluations</td><td align=right><input iType='option' optionName='Evaluations' value="500" style="width:40px;border:0;" type="text" name="EvaluationsValue" id="EvaluationsValue" class="cSlider"  /></td></tr></table>			                           
+			                            <div id="sliderEvaluations"></div>	
+			                            <table width="100%"><tr><td>Time Limit (mins)</td><td align=right><input iType='option' optionName='Time Limit' value="60" style="width:40px;border:0;" type="text" name="TimeLimitValue" id="TimeLimitValue" class="cSlider"  /></td></tr></table>			                           
 			                            <div id="sliderTimeLimit"></div>	
-			                            <table width="100%"><tr><td>Generation Deviation</td><td align=right><input  value="50" style="width:40px;border:0;" type="text" id="GenerationDevValue" class="cSlider"  /></td></tr></table>		                            
+			                            <table width="100%"><tr><td>Generation Deviation</td><td align=right><input iType='option' optionName='Generation Deviation' value="50" style="width:40px;border:0;" name="GenerationDevValue" type="text" id="GenerationDevValue" class="cSlider"  /></td></tr></table>		                            
 			                            <div id="sliderGenerationDev"></div>
-			                            <table width="100%"><tr><td>Optimal Value</td><td align=right><input  value="300" style="width:40px;border:0;" type="text" id="OptimalValue" class="cSlider"  /></td></tr></table>
+			                            <table width="100%"><tr><td>Optimal Value</td><td align=right><input iType='option' optionName='Optimal Value' value="300" style="width:40px;border:0;" type="text" name="OptimalValue" id="OptimalValue" class="cSlider"  /></td></tr></table>
 			                            <div id="sliderOptimalValue"></div>		                            
 			                        </td>			                        		                        
 			                    </tr>              
 			                </table>
 			                </div>	  			            			            
 			                <div class="buttons">
-                              <button type="submit" class="previous" onclick="loadnext(2,1);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button type="submit" class="next" onclick="loadnext(2,3);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button  class="previous" onclick="loadnext(2,1);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button  class="next" onclick="loadnext(2,3);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-4">
@@ -458,14 +509,14 @@ This tool allows you to find the loads for each of the factors in the quantitive
 				                <table>
 				                    <tr>
 				                        <td>Email address:</td>
-				                        <td><input type="text" name="defaultEmail" /></td>
+				                        <td><input type="text" name="notificationEmail"  id="notificationEmail"/></td>
 				                    </tr>
 				                    <tr>
 				                        <td valign="top">Events:</td>
 				                        <td valign="top">
-				                            <input type="checkbox" name="onError" /> Error
-				                            <br /><input type="checkbox" name="onError" /> Complete
-				                            <br /><input type="checkbox" name="onError" /> Overrun
+				                            <input iType='event' itemName='Error' type="checkbox" name="onError" /> Error
+				                            <br /><input iType='event' itemName='Compeletion' type="checkbox" name="onCompeletion" /> Compeletion
+				                            <br /><input iType='event' itemName='Overrun' type="checkbox" name="onOverrun" /> Overrun
             				                
 				                       </td>
 				                    </tr>				        
@@ -473,15 +524,15 @@ This tool allows you to find the loads for each of the factors in the quantitive
 				  			                
 			                </div>	  			            			            			            
                             <div class="buttons">
-                              <button type="submit" class="previous" onclick="loadnext(3,2);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button type="submit" class="next" onclick="loadnext(3,4);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button  class="previous" onclick="loadnext(3,2);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button  class="next" onclick="loadnext(3,4);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-5">
 			                <div id="tabs5Content">
 			                </div>	  			            			            			            
 			                <div class="buttons">
-                                   <button type="submit" class="previous" onclick="loadnext(4,3);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                                   <button  class="previous" onclick="loadnext(4,3);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
                                   <button type="submit" class="next" onclick="submitJob()"> Finish <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>			            
@@ -502,7 +553,7 @@ This tool allows you to find the loads for each of the factors in the quantitive
 			</div>
 			</div>
 	
-
+</form>
 
 <div id="draggable" style="height:500px" class="ui-widget-content">
 	<p><b>Job History</b> - This shows recent and active jobs - you can click on 'details' to see charts showing information about the job.</p>
@@ -510,8 +561,8 @@ This tool allows you to find the loads for each of the factors in the quantitive
 
 
 <div id="JobInfoDialog" title="Job Information">
-	<p>Adding the modal overlay screen makes the dialog look more prominent because it dims out the page content.</p>
-<div id="progressbar"></div>
+	<div id="jobDetails"></div>
+<%--<div id="progressbar"></div>--%>
 
 </div>	
 </div>
