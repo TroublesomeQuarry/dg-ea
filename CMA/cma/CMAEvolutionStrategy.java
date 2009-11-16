@@ -446,6 +446,15 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
         int idxDeltaFitHist = 0;
     }
     protected FitnessCollector fit = new FitnessCollector();
+    
+    public double[] getRawFitness(){
+    	double[] retVal = new double[fit.raw.length];
+    	
+    	for(int i=0; i<fit.raw.length; i++)
+    		retVal[i] = fit.raw[i].val;
+    	
+    	return retVal;
+    }
 
     double recentFunctionValue; 
     double recentMaxFunctionValue;
