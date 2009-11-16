@@ -18,9 +18,9 @@ namespace GUI.ActiveMq
     {
         private const string URI = "tcp://localhost:61616";
         private const string DESTINATION = "FOO.BAR";
-        private const int TIMEOUT_SECS = 500;
+        private const int TIMEOUT_SECS = 5;
 
-        public IMapMessage EcjRequest(String jobName, String verb, String body)
+        public IMapMessage RequestMap(String jobName, String verb, String body)
         {
             IMapMessage ecjResponse;
             ConnectionFactory connectionFactory = new ConnectionFactory(URI);
@@ -59,6 +59,46 @@ namespace GUI.ActiveMq
             }
             return ecjResponse;
         }   
+
+        public ITextMessage RequestText(String jobName, String verb, String body)
+        {
+            ITextMessage ecjResponse;
+            ConnectionFactory connectionFactory = new ConnectionFactory(URI);
+            try
+            {
+                using (IConnection connection = connectionFactory.CreateConnection())
+                {
+                    using (ISession session = connection.CreateSession())
+                    {
+                        ITemporaryQueue queue = session.CreateTemporaryQueue();
+                        using (IMessageConsumer consumer = session.CreateConsumer(queue))
+                        {
+                            IMapMessage message = session.CreateMapMessage();
+                            message.Body.SetString("VERB", verb);
+                            message.Body.SetString("BODY", body);
+                            message.Body.SetString("JOBNAME", jobName);
+                            message.NMSReplyTo = queue;
+                            string correlationId = Guid.NewGuid().ToString();
+                            message.NMSCorrelationID = correlationId;
+                            using (IMessageProducer producer = session.CreateProducer())
+                            {
+                                NmsDestinationAccessor destinationResolver = new NmsDestinationAccessor();
+                                IDestination destination = destinationResolver.ResolveDestinationName(session, DESTINATION);
+                                producer.Send(destination, message);
+                            }
+                            IMessage response = consumer.Receive(TimeSpan.FromSeconds(TIMEOUT_SECS));
+                            ecjResponse = response as ITextMessage;
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Failed to send request", ex);
+            }
+            return ecjResponse;
+        }  
     }
 
 }

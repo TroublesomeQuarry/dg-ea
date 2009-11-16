@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="Listener.cs" />
     <Compile Include="Messaging.cs" />
+    <Compile Include="Models\ChartData.cs" />
     <Compile Include="Models\GUI.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -88,6 +89,7 @@
     <Compile Include="Models\IDataGroup_ElementRepository.cs" />
     <Compile Include="Models\IJobRepository.cs" />
     <Compile Include="Models\IOptionRepository.cs" />
+    <Compile Include="Models\JobViewModel.cs" />
     <Compile Include="Models\SqlDataElementRepository.cs" />
     <Compile Include="Models\SqlDataGroup_ElementRepository.cs" />
     <Compile Include="Models\SqlJobRepository.cs" />
@@ -128,6 +130,7 @@
     <Content Include="Scripts\wizard.js" />
     <Content Include="Views\DataElement\Index.aspx" />
     <Content Include="Views\Job\Create.aspx" />
+    <Content Include="Views\Job\Details.aspx" />
     <Content Include="Views\Job\Edit.aspx" />
     <Content Include="Views\Job\Index.aspx" />
     <Content Include="Views\Option\Index.aspx" />
@@ -164,6 +167,7 @@
     <None Include="Models\GUI.dbml.layout">
       <DependentUpon>GUI.dbml</DependentUpon>
     </None>
+    <Content Include="Views\Shared\Dialog.Master" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

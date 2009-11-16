@@ -23,11 +23,11 @@ namespace MessageTest
 
                 Messaging messaging = new Messaging();
 
-                IMapMessage response = messaging.EcjRequest("JOB1", "AddJob", fileContents);
+                IMapMessage response = messaging.RequestMap("JOB1", "AddJob", fileContents);
 
                 Console.WriteLine("STATUS: " + response.Body.GetString("STATUS"));
                 Thread.Sleep(10000);
-                response = messaging.EcjRequest("JOB1", "GetStatistics", fileContents);
+                response = messaging.RequestMap("JOB1", "GetStatistics", fileContents);
                 Console.WriteLine("STATUS: " + response.Body.GetString("STATUS"));
                 Console.WriteLine("BODY: " + response.Body.GetString("BODY"));
 

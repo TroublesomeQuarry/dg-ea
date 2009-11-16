@@ -1,0 +1,5 @@
+C:\GAProject\ws\EaGUI\VS\GUI\playground\bin\Debug\playground.exe
+C:\GAProject\ws\EaGUI\VS\GUI\playground\bin\Debug\playground.pdb
+C:\GAProject\ws\EaGUI\VS\GUI\playground\obj\Debug\ResolveAssemblyReference.cache
+C:\GAProject\ws\EaGUI\VS\GUI\playground\obj\Debug\playground.exe
+C:\GAProject\ws\EaGUI\VS\GUI\playground\obj\Debug\playground.pdb
