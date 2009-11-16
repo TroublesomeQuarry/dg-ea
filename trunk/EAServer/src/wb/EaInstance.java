@@ -29,6 +29,7 @@ public class EaInstance {
 		this.setJobId(JobId);
 		this.setSeed(Seed);
 		state = new EvolutionState();
+		
 	}
 
 
@@ -74,8 +75,7 @@ public class EaInstance {
 	}
 
 	void killPlayThread() {
-		tellThreadToStop();
-
+		tellThreadToStop();		
 		try {
 			if (playThread != null) {
 				while (playThread.isAlive()) {
@@ -107,6 +107,7 @@ public class EaInstance {
 	}	
 	
 	void tellThreadToStop() {
+		this.status = "stopping";
 		threadIsToStop = true;
 	}
 	
@@ -119,6 +120,8 @@ public class EaInstance {
 			public void run() {
 				try {
 				state = new EvolutionState();
+				state.setStatus("Initializing");
+				
 				IObjectiveFunction fitfun = new Rosenbrock();
 				CMAEvolutionStrategy cmaes = new CMAEvolutionStrategy();
 				cmaes.readProperties(); // read options, see file CMAEvolutionStrategy.properties
@@ -133,7 +136,7 @@ public class EaInstance {
 				// initial output to files
 				cmaes.writeToDefaultFilesHeaders(0); // 0 == overwrites old files
 			
-
+				state.setStatus("Running");
 					while(cmaes.stopConditions.getNumber() == 0) {
 
 			            // --- core iteration step ---
@@ -161,7 +164,7 @@ public class EaInstance {
 						
 						state.postEvaluationStatistics(cmaes);
 					}
-
+					state.setStatus("Finishing");
 					cmaes.setFitnessOfMeanX(fitfun.valueOf(cmaes.getMeanX())); // updates the best ever solution 
 
 					// final output
@@ -174,6 +177,7 @@ public class EaInstance {
 							+ " at evaluation " + cmaes.getBestEvaluationNumber());		
 					
 					state.finalStatistics(cmaes);
+					state.setStatus("Complete");
 				} catch (Exception e) {
 					System.err.println("Exception when running job:\n\t" + e);
 				}
