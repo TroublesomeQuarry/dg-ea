@@ -69,8 +69,9 @@ class Rosenbrock implements IObjectiveFunction { // meaning implements methods v
     	Connection _con = null;
     	  try
           {
+      		  
     		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-    		  _con = DriverManager.getConnection("jdbc:sqlserver://127.0.0.1;databaseName=quant;user=ga;password=amnesia;");
+    		  _con = DriverManager.getConnection(Util.getConfigProperty("connectionstring"));
           }
           catch (Exception e) {
               e.printStackTrace();
