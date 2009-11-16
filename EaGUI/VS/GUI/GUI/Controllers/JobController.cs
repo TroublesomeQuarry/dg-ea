@@ -84,7 +84,7 @@ namespace GUI.Controllers
             JobViewModel model = new JobViewModel();
            
 
-            if (String.IsNullOrEmpty(job.Status) || !job.Status.Equals("Complete"))
+            if (String.IsNullOrEmpty(job.Status) || !job.Status.Trim().Equals("Complete"))
             {
 
                 IMapMessage mapMessage = messaging.RequestMap(job.Name, "GetStatus", "");
