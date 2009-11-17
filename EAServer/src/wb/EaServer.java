@@ -52,9 +52,7 @@ public class EaServer {
 	public String GetStatistics(String jobName){
 		boolean doesExists = false;
 		if(instances.containsKey(jobName)){
-			return Util.DocToString(instances.get(jobName).getState().document);
-		
-					
+			return Util.DocToString(instances.get(jobName).getState().document);		
 		}
 		else{
 			return " jobName not found: " + jobName;

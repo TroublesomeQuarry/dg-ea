@@ -24,13 +24,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 /**
  * Hello world!
  */
 public class Main {
+	
+	static Logger logger = Logger.getLogger(Main.class.getName());
 
 	public static void main(String[] args) throws Exception {
+		PropertyConfigurator.configure("log4j.properties");
+		
+		logger.debug("here");
+		System.out.println(Main.class.getName());
+		
 		EaServer eaServer = new EaServer();
 		MessageServer messageServer = new MessageServer();
 		messageServer.setMessageProtocol(new MessageProtocol(eaServer));
