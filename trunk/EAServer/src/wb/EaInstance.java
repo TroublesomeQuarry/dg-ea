@@ -5,13 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 
 import cma.CMAEvolutionStrategy;
 import cma.fitness.IObjectiveFunction;
 
 public class EaInstance {
-
+	static Logger logger = Logger.getLogger(MessageServer.class.getName());
 	private String jobId = null;
 	private Thread playThread = null;
 	private String status = null;
@@ -26,10 +28,10 @@ public class EaInstance {
 	boolean _step = false;
 
 	public EaInstance(String parametersFile, String JobId, int Seed) {
+		PropertyConfigurator.configure("log4j.properties");
 		this.setJobId(JobId);
 		this.setSeed(Seed);
-		state = new EvolutionState();
-		
+		state = new EvolutionState();		
 	}
 
 
@@ -93,8 +95,8 @@ public class EaInstance {
 				playThread = null;
 			}
 		} catch (InterruptedException ex) {
-			System.out
-					.println("Interrupted while killing the play thread.  Shouldn't happen.");
+			logger.error(ex);
+			logger.info("Interrupted while killing the play thread.  Shouldn't happen.");
 		}
 	}
 
@@ -179,7 +181,7 @@ public class EaInstance {
 					state.finalStatistics(cmaes);
 					state.setStatus("Complete");
 				} catch (Exception e) {
-					System.err.println("Exception when running job:\n\t" + e);
+					logger.equals(e);
 				}
 
 

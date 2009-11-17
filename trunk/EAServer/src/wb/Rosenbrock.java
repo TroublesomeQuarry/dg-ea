@@ -6,18 +6,22 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
-
 import cma.*;
 import cma.fitness.IObjectiveFunction;
 import java.sql.*;
 import com.microsoft.sqlserver.jdbc.SQLServerResultSet;
-
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /** The very well-known Rosenbrock objective function to be minimized. 
  */
 class Rosenbrock implements IObjectiveFunction { // meaning implements methods valueOf and isFeasible
+	static Logger logger = Logger.getLogger(Rosenbrock.class.getName());
 	public static Connection con =  getConn();
-	
+	 
+	public Rosenbrock(){
+		PropertyConfigurator.configure("log4j.properties");
+	}
 	public double valueOf (double[] x) {
 		double res = 0;
 
@@ -49,7 +53,8 @@ class Rosenbrock implements IObjectiveFunction { // meaning implements methods v
              res = proc.getDouble(1);
          }
           catch (Exception e) {
-              e.printStackTrace();
+			logger.error("Error in evaluation");
+			logger.error(e);
               
            }          
 	          finally {
@@ -68,14 +73,13 @@ class Rosenbrock implements IObjectiveFunction { // meaning implements methods v
     	System.out.println("getting connection");
     	Connection _con = null;
     	  try
-          {
-      		  
+          {      		  
     		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
     		  _con = DriverManager.getConnection(Util.getConfigProperty("connectionstring"));
           }
           catch (Exception e) {
-              e.printStackTrace();
-              
+  			logger.error("Error getting connection " + Util.getConfigProperty("connectionstring"));
+			logger.error(e);              
            }    
     	return _con;
     }	

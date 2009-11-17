@@ -1,15 +1,20 @@
 package wb;
 
 import javax.jms.JMSException;
+
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 public class MessageProtocol {
 	private EaServer eaServer;
+	static Logger logger = Logger.getLogger(MessageProtocol.class.getName());
 
 	public MessageProtocol(EaServer ecj) {
+		PropertyConfigurator.configure("log4j.properties");
 		this.eaServer = ecj;
 	}
 
@@ -22,7 +27,8 @@ public class MessageProtocol {
 				String jobName = request.getString("JOBNAME");
 				String stats = "";
 				
-				
+				logger.info("Request - jobName : " + jobName + " verb : " + verb);
+				logger.debug("Message Body " + body);
 				
 				if (verb.equals("GetStatus")) {
 					MapMessage response = session.createMapMessage();
@@ -66,7 +72,8 @@ public class MessageProtocol {
 				
 			} catch (JMSException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error in message protocol");
+				logger.error(e);
 			}
 			return null;
 			

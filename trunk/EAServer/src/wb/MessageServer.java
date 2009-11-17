@@ -2,6 +2,8 @@ package wb;
 
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
@@ -15,6 +17,8 @@ public class MessageServer implements MessageListener {
     private boolean transacted = false;
     private MessageProducer replyProducer;
     private MessageProtocol messageProtocol;
+    
+    static Logger logger = Logger.getLogger(MessageServer.class.getName());
 
     public MessageProtocol getMessageProtocol() {
 		return messageProtocol;
@@ -31,6 +35,7 @@ public class MessageServer implements MessageListener {
     }
 
     public MessageServer() {
+    	PropertyConfigurator.configure("log4j.properties");
         try {
             //This message broker is embedded
             BrokerService broker = new BrokerService();
@@ -39,7 +44,7 @@ public class MessageServer implements MessageListener {
             broker.addConnector(messageBrokerUrl);
             broker.start();
         } catch (Exception e) {
-            //Handle the exception appropriately
+        	logger.error(e);
         }
 
         //Delegating the handling of messages to another class, instantiate it before setting up JMS so it
@@ -53,7 +58,7 @@ public class MessageServer implements MessageListener {
     }
 
     private void setupMessageQueueConsumer() {
-    	System.out.println("starting ");
+    	logger.info("Starting Server");
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(messageBrokerUrl);
         Connection connection;
         try {
@@ -71,13 +76,13 @@ public class MessageServer implements MessageListener {
             MessageConsumer consumer = this.session.createConsumer(adminQueue);
             consumer.setMessageListener(this);
         } catch (JMSException e) {
-          e.printStackTrace();
+        	logger.error(e);
         }
-        System.out.println(" e  setupMessageQueueConsumer");
+       
     }
 
     public void onMessage(Message request) {
-    	System.out.println("got message");
+    	logger.info("Got message");
         try {
 
             if (request instanceof MapMessage) {
@@ -97,7 +102,7 @@ public class MessageServer implements MessageListener {
             //one outstanding message to the server
 
         } catch (JMSException e) {
-        	e.printStackTrace();
+        	logger.error(e);
         }
     }
 
