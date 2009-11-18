@@ -1,9 +1,11 @@
 package wb;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -26,12 +28,20 @@ public class EaInstance {
 	private EvolutionState state = null;
 	Object cleanupLock = new Object();
 	boolean _step = false;
+	Properties params = new Properties();
 
 	public EaInstance(String parametersFile, String JobId, int Seed) {
 		PropertyConfigurator.configure("log4j.properties");
 		this.setJobId(JobId);
 		this.setSeed(Seed);
 		state = new EvolutionState();		
+		logger.debug(parametersFile);
+		try {
+			params.load(new ByteArrayInputStream(parametersFile.getBytes()));
+		} catch (IOException e) {
+			logger.error(e);
+		}
+		params.getProperty("population");
 	}
 
 
@@ -130,8 +140,27 @@ public class EaInstance {
 				//cma.setDimension(11); // overwrite some loaded properties
 				//cma.setInitialX(0.5); // in each dimension, also setTypicalX can be used
 				//cma.setInitialStandardDeviation(0.2); // also a mandatory setting 
+				
+				
 				cmaes.options.stopFitness = 1e-9;       // optional setting
-
+				logger.debug(params.toString());
+				if(params.containsKey("PopSizeValue")){
+					
+					cmaes.parameters.setPopulationSize(Integer.parseInt((params.getProperty("PopSizeValue"))));
+				}
+				
+				if(params.containsKey("EvaluationsValue")){
+					
+					cmaes.options.stopMaxFunEvals = Integer.parseInt((params.getProperty("EvaluationsValue")));
+				}				
+				
+				if(params.containsKey("GenerationDevValue")){
+					cmaes.setInitialStandardDeviation(Double.parseDouble((params.getProperty("GenerationDevValue"))));
+				}
+				
+				
+				
+			
 				// initialize cma and get fitness array to fill in later
 				double[] fitness = cmaes.init();  // new double[cma.parameters.getPopulationSize()];
 
