@@ -10,5 +10,7 @@ namespace GUI.Model
     {
         public Job job {get; set;}
         public ChartData[] chartData {get; set;}
+        public String[] BestIndivilual;
+        public String StopMessage = "";
     }
 }

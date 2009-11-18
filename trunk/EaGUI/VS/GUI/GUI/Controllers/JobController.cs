@@ -33,6 +33,7 @@ namespace GUI.Controllers
         {
 
             var jobs = _jobRepository.FindAllJobs();
+                       
 
             if (Request.IsAjaxRequest())
             {
@@ -51,25 +52,29 @@ namespace GUI.Controllers
                 return Json(jsonJob.ToList());
             }
 
+            jobs = from job in _jobRepository.FindAllJobs()
+                   where job.IsTemplate == false
+                   select job;
+
             Messaging messaging = new Messaging();
             foreach (Job j in jobs)
             {
-                if (String.IsNullOrEmpty(j.Status) || (!j.Status.Equals("Complete") && !j.Status.Equals("Orphan")))
+                if (String.IsNullOrEmpty(j.Status) || (!j.Status.Trim().Equals("Complete") && !j.Status.Trim().Equals("Orphan")))
                 {
                     try
                     {
-                        //IMapMessage mapMessage = messaging.RequestMap(j.Name, "GetStatus", "");
-                        //String status = mapMessage.Body.GetString("BODY");
-                        //j.Status = status;
-                        //if (status.Equals("Complete"))
-                        //    j.EndTime = DateTime.Now;
+                        IMapMessage mapMessage = messaging.RequestMap(j.Name, "GetStatus", "");
+                        String status = mapMessage.Body.GetString("BODY");
+                        j.Status = status;
+                        if (status.Trim().Equals("Complete"))
+                            j.EndTime = DateTime.Now;
 
-                        //_jobRepository.UpdateJob(j);
+                        _jobRepository.UpdateJob(j);
                     }
                     catch { }
                 }
 
-            }
+            } 
 
             return View(jobs);
         }
@@ -89,6 +94,10 @@ namespace GUI.Controllers
 
                 IMapMessage mapMessage = messaging.RequestMap(job.Name, "GetStatus", "");
                 job.Status = mapMessage.Body.GetString("BODY");
+                if (job.Status.Trim().Equals("Complete"))
+                    job.EndTime = DateTime.Now;
+
+               
 
                 ITextMessage response = messaging.RequestText(job.Name, "GetStatistics", "");
                 // String stats = response.Body.GetString("BODY");
@@ -125,6 +134,22 @@ namespace GUI.Controllers
 
             }
 
+            XmlNode xmlNode = xmlStats.SelectSingleNode("//finalStat");
+
+            if (xmlNode != null)
+            {
+                if (xmlNode.Attributes["bestIndividual"] != null)
+                {
+                    model.BestIndivilual = xmlNode.Attributes["bestIndividual"].Value.Split(',');
+                }
+
+                if (xmlNode.Attributes["stopConditions"] != null)
+                {
+                    model.StopMessage = xmlNode.Attributes["stopConditions"].Value;
+                }
+
+            }
+
             model.chartData = data;
             model.job = job;
 
@@ -149,19 +174,19 @@ namespace GUI.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Create(Job job)
         {
+            string body = "";
             if (Request.Form.HasKeys())
             {
                 foreach (string x in Request.Form)
                 {
-                    Response.Write(x + ": " + Request.Form[x] + "<br />");
+                    body = body + x + "=" + Request.Form[x] + "\n";
                 } 
-
             }
             string jobName = "CMAES" + DateTime.Now.Second.ToString();
 
             Messaging messaging = new Messaging();
 
-            IMapMessage response = messaging.RequestMap(jobName, "AddJob", jobName);
+            IMapMessage response = messaging.RequestMap(jobName, "AddJob", body);
 
            job.IsTemplate = false;
            job.Name = jobName;
@@ -170,6 +195,7 @@ namespace GUI.Controllers
            job.StartTime = DateTime.Now;
            _jobRepository.AddJob(job);
 
+           Thread.Sleep(1000);
 
 
             Response.Redirect("/default.aspx");
