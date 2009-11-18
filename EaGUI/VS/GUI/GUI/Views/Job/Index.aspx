@@ -30,7 +30,7 @@
     var text1 = "<b>Job History</b> - This shows recent and active jobs - you can click on 'details' to see charts showing information about the job "
     var text2 = "<b>To create a new job</b> - select the type of problem to solve. Each of these problem types has certain characteristics that help us to defined part of the algorithm. Some of the parameters of the EA depend on the type of problem you select. "
     var text3 = "<b>User options</b> - Here you can setup some defaults like the email address to send alerts to. "
-    var text4 = "<b>Factors</b> - Select the factors that you wish to find loads for. "
+    var text4 = "<b>Factors</b> - Select the factors that you wish to find weights for. "
     var text5 = "<b>Options</b> - You can override the default options here. "
     var text6 = "<b>Notifications</b> - The email address to send alerts to and the events you want to receive alerts for "
     var text7 = "<b>Confirm</b> - Look over you selection and click finish to submit the job. "
@@ -47,26 +47,26 @@
             orientation: "horizontal"
         });
 
-//        $("#progressbar").progressbar({
-//            value: 59
-//        });        
+        //        $("#progressbar").progressbar({
+        //            value: 59
+        //        });        
 
         $("#sliderPopSize").slider({
             max: 200,
-            value: 50,
+            value: 10,
             slide: function(event, ui) {
-            $("#PopSizeValue").val(ui.value);
-            $('#sliderEvaluations').slider('option', 'max', ui.value * 100);
-            $('#sliderEvaluations').slider('option', 'value', ui.value * 10);
-            $("#EvaluationsValue").val(ui.value * 10);
+                $("#PopSizeValue").val(ui.value);
+                $('#sliderEvaluations').slider('option', 'max', ui.value * 100);
+                $('#sliderEvaluations').slider('option', 'value', ui.value * 10);
+                $("#EvaluationsValue").val(ui.value * 10);
             }
         });
 
         $("#sliderEvaluations").slider({
-            max:20000,
-            value: 500,
+            max: 20000,
+            value: 1000,
             slide: function(event, ui) {
-            $("#EvaluationsValue").val(ui.value);
+                $("#EvaluationsValue").val(ui.value);
             }
         });
 
@@ -83,7 +83,7 @@
             max: 100,
             value: 50,
             slide: function(event, ui) {
-                $("#GenerationDevValue").val(ui.value);
+                $("#GenerationDevValue").val(ui.value / 100);
             }
         });
 
@@ -196,7 +196,7 @@
 
                     var data = $("input[iType='option']");
                     $.each(data, function(t, item) {
-                        stext += $(item).attr('optionName') + "<br/>";
+                        stext += $(item).attr('optionName') + " : " + $(item).val() + "<br/>";
                     });
                     stext += "</td>";
                     stext += "</tr>";
@@ -209,7 +209,7 @@
                     var data = $("input[iType='event']:checked");
                     $.each(data, function(t, item) {
                         stext += $(item).attr('itemName') + "<br/>";
-                    });                    
+                    });
                     stext += "</td>";
                     stext += "</tr></table>";
 
@@ -225,14 +225,14 @@
 
 
 
-        $.getJSON("/Job?sdh",
+        $.getJSON("/Job?sdhl5j",
                 function(data) {
-
+                    
                     $.each(data, function(t, item) {
-//                        if (isNewCategory(item.ProblemName)) {
-//                            $('#selectable').append("<li job_Id='0' class='ui-widget-content'>Blank " + item.ProblemName + "</li>");
-//                        };
-
+                        //                        if (isNewCategory(item.ProblemName)) {
+                        //                            $('#selectable').append("<li job_Id='0' class='ui-widget-content'>Blank " + item.ProblemName + "</li>");
+                        //                        };
+                    
                         $('#selectable').append("<li  problemName='" + item.JobName + "' problem_Id='" + item.Problem_Id + "' job_Id='" + item.Job_Id + "' class='ui-widget-content'>" + item.JobName + "</li>");
                     });
 
@@ -345,7 +345,7 @@
 
    
     function submitJob() {
-       $("newJob").submit();
+       //$("newJob").submit();
     }
 
     function doDetails(jobID) {
@@ -354,27 +354,39 @@
 //            alert("Data Loaded: " + data);
 //        });
 
-        $.ajax({
-            url: "/Job/Details/" + jobID,
-            cache: false,
-            success: function(data) {
-            $("#jobDetails").html(data);
-              
-            }
-        });
 
+        updateDeatils(jobID);
 
        // $("#jobDetails").load("/Job/Details/" + jobID, {cache: false} );
 
         $("#JobInfoDialog").dialog("open");
-        
+
+        while ($("#JobInfoDialog").open) {
+            
+        }
+
+    }
+
+    function updateDeatils(jobID) {
+    
+        $.ajax({
+            url: "/Job/Details/" + jobID,
+            cache: false,
+            success: function(data) {
+                $("#jobDetails").html(data);
+
+            }
+        });
+
     }
     
 </script>
 
 <form method="post" id="newJob" name="newJob" action="/Job/Create">
 <h2>Welcome</h2>
-This tool allows you to find the loads for each of the factors in the quantitive models.
+This tool is a tool for finding wieghts for factor-models. It runs an algoritm that looks at the current holdings in a fund 
+and finds the optimal weigths for the factors you are interested in. It is used for comparing the original qunatitive model against 
+the funds actual holdings.
 		<div id="accordion">
 			<div>
 
@@ -454,17 +466,17 @@ This tool allows you to find the loads for each of the factors in the quantitive
 		                
 			                </div>				            
 			                <div class="buttons">
-                                <button  class="previous"  disabled="disabled"> <img src="/Content/wizard/images/arrow_left.png" alt=""/> Back </button>
+                                <button  type="button" class="previous"  disabled="disabled"> <img src="/Content/wizard/images/arrow_left.png" alt=""/> Back </button>
                                
-                                <button  class="next" disabled="disabled" id="tab1Next"  onclick="loadnext(0,1);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                                <button  type="button"  class="next" disabled="disabled" id="tab1Next"  onclick="loadnext(0,1);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
                         </div>
 			            <div id="tabs-2">
 			                <div id="tabs2Content">
 			                </div>	           
 			                <div class="buttons">
-                              <button  class="previous" onclick="loadnext(1,0);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button  class="next" onclick="loadnext(1,2);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button type="button"  class="previous" onclick="loadnext(1,0);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button type="button"  class="next" onclick="loadnext(1,2);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-3">
@@ -472,35 +484,43 @@ This tool allows you to find the loads for each of the factors in the quantitive
 			                <table  style="width:500px">
 			                    <tr>
 			                        <td colspan="2">
-			                            <table width="100%"><tr><td>Population Size</td><td align=right><input iType='option' optionName='Population Size' value="50" style="width:40px;border:0;" type="text" name="PopSizeValue" id="PopSizeValue" class="cSlider"  /></td></tr></table>
+			                            <table width="100%"><tr><td>Population Size</td><td align=right><input iType='option' optionName='Population Size' value="10" style="width:40px;border:0;" type="text" name="PopSizeValue" id="PopSizeValue" class="cSlider"  /></td></tr></table>
 			                        </td>			                        
 			                    </tr>
 			                    <tr>
 			                        <td colspan="2">
 			                            <div id="sliderPopSize"></div>
 			                        </td>			                        
-			                    </tr>		
+			                    </tr>	
+			                    <tr>
+			                        <td colspan="2">
+			                            <table width="100%"><tr><td>Initial Standard Deviation (step-size)</td><td align=right><input iType='option' optionName='Initial Standard Deviation' value=".50" style="width:40px;border:0;" type="text" name="GenerationDevValue" id="GenerationDevValue" class="cSlider"  /></td></tr></table>
+			                        </td>			                        
+			                    </tr>
+			                    <tr>
+			                        <td colspan="2">
+			                            <div id="sliderGenerationDev"></div>
+			                        </td>			                        
+			                    </tr>			                    
+			                    
+			               
 			                    <tr>
 			                        <td valign="top">
 			                            Termination:
 			                        </td>	
 			                        <td valign="top">
 		
-			                            <table width="100%"><tr><td>Evaluations</td><td align=right><input iType='option' optionName='Evaluations' value="500" style="width:40px;border:0;" type="text" name="EvaluationsValue" id="EvaluationsValue" class="cSlider"  /></td></tr></table>			                           
+			                            <table width="100%"><tr><td>Evaluations</td><td align=right><input iType='option' optionName='Evaluations' value="1000" style="width:40px;border:0;" type="text" name="EvaluationsValue" id="EvaluationsValue" class="cSlider"  /></td></tr></table>			                           
 			                            <div id="sliderEvaluations"></div>	
 			                            <table width="100%"><tr><td>Time Limit (mins)</td><td align=right><input iType='option' optionName='Time Limit' value="60" style="width:40px;border:0;" type="text" name="TimeLimitValue" id="TimeLimitValue" class="cSlider"  /></td></tr></table>			                           
-			                            <div id="sliderTimeLimit"></div>	
-			                            <table width="100%"><tr><td>Generation Deviation</td><td align=right><input iType='option' optionName='Generation Deviation' value="50" style="width:40px;border:0;" name="GenerationDevValue" type="text" id="GenerationDevValue" class="cSlider"  /></td></tr></table>		                            
-			                            <div id="sliderGenerationDev"></div>
-			                            <table width="100%"><tr><td>Optimal Value</td><td align=right><input iType='option' optionName='Optimal Value' value="300" style="width:40px;border:0;" type="text" name="OptimalValue" id="OptimalValue" class="cSlider"  /></td></tr></table>
-			                            <div id="sliderOptimalValue"></div>		                            
+			                            <div id="sliderTimeLimit"></div>		                            
 			                        </td>			                        		                        
 			                    </tr>              
 			                </table>
 			                </div>	  			            			            
 			                <div class="buttons">
-                              <button  class="previous" onclick="loadnext(2,1);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button  class="next" onclick="loadnext(2,3);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button type="button"  class="previous" onclick="loadnext(2,1);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button type="button"  class="next" onclick="loadnext(2,3);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-4">
@@ -524,15 +544,15 @@ This tool allows you to find the loads for each of the factors in the quantitive
 				  			                
 			                </div>	  			            			            			            
                             <div class="buttons">
-                              <button  class="previous" onclick="loadnext(3,2);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
-                              <button  class="next" onclick="loadnext(3,4);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
+                              <button type="button"  class="previous" onclick="loadnext(3,2);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                              <button type="button"  class="next" onclick="loadnext(3,4);"> Next <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>
 			            <div id="tabs-5">
 			                <div id="tabs5Content">
 			                </div>	  			            			            			            
 			                <div class="buttons">
-                                   <button  class="previous" onclick="loadnext(4,3);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
+                                   <button type="button"  class="previous" onclick="loadnext(4,3);"> <img src="/Content/wizard/images/arrow_left.png" alt="" /> Back </button>
                                   <button type="submit" class="next" onclick="submitJob()"> Finish <img src="/Content/wizard/images/arrow_right.png" alt=""/> </button>
                             </div>
 			            </div>			            

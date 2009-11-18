@@ -4,19 +4,21 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-    
-    
+    <table>
+    <tr>
+        <td align="center">    
         <%
             System.Web.UI.DataVisualization.Charting.Chart Chart1 = new System.Web.UI.DataVisualization.Charting.Chart();
-            Chart1.Width = 750;
-            Chart1.Height = 400;
+            Chart1.Width = 720;
+            Chart1.Height = 380;
             Chart1.RenderType = RenderType.ImageTag;
             Chart1.ImageLocation = "..\\..\\TempImages\\ChartPic_#SEQ(200,30)";
 
             Chart1.Palette = ChartColorPalette.BrightPastel;
-            Title t = new Title(Model.job.Name + " Progress", Docking.Top, new System.Drawing.Font("Trebuchet MS", 14, System.Drawing.FontStyle.Bold), System.Drawing.Color.FromArgb(26, 59, 105));
+            Title t = new Title(Model.job.Name, Docking.Top, new System.Drawing.Font("Trebuchet MS", 14, System.Drawing.FontStyle.Bold), System.Drawing.Color.FromArgb(26, 59, 105));
             Chart1.Titles.Add(t);
             Chart1.ChartAreas.Add("Series 1");
+            
 
             // create a couple of series
             Chart1.Series.Add("Max");
@@ -24,7 +26,26 @@
             Chart1.Series.Add("Min");
             Chart1.Series["Min"].ChartType = SeriesChartType.Line;
             Chart1.Series.Add("Mean");
-            Chart1.Series["Mean"].ChartType = SeriesChartType.Line;        
+            Chart1.Series["Mean"].ChartType = SeriesChartType.Line;
+            Chart1.ChartAreas["Series 1"].AxisY.IsStartedFromZero = false;
+            Chart1.ChartAreas["Series 1"].AxisX.Title = "Algorithm Progress";
+
+            if (Model.BestIndivilual != null)
+            {
+                Chart1.ChartAreas.Add("Series 2");
+                Chart1.ChartAreas["Series 2"].AxisX.Title = "Best Solution - Factor Weights";
+                Chart1.Series.Add("Best");
+                Chart1.Series["Best"].ChartType = SeriesChartType.Column;
+                Chart1.Series["Best"].ChartArea = "Series 2";
+                Chart1.Series["Best"].IsVisibleInLegend = false;
+
+                //  Chart1.Series["Best"].
+                for (int i = 0; i < Model.BestIndivilual.Length; i++)
+                {
+                    Chart1.Series["Best"].Points.AddXY(i, Double.Parse(Model.BestIndivilual[i]));
+                }
+            }
+            
                     
             //Chart1.Series.Add("Min");
             //Chart1.Series.Add("Mean");
@@ -33,15 +54,15 @@
             for (int i = 0; i < Model.chartData.Length; i++)
             {
                 double[] dataItems = new double[4];
-                dataItems[0] = Model.chartData[i].Max;
-                dataItems[1] = Model.chartData[i].Min;
-                dataItems[2] = Model.chartData[i].Mean;
+                dataItems[0] = 30000 - Model.chartData[i].Max;
+                dataItems[1] = 30000 - Model.chartData[i].Min;
+                dataItems[2] = 30000 - Model.chartData[i].Mean;
                 dataItems[3] = Model.chartData[i].StdDev;
 
                 int iter = Model.chartData[i].Iteration;
 
-                Chart1.Series["Max"].Points.AddXY(iter, dataItems[0]);
-                Chart1.Series["Min"].Points.AddXY(iter, dataItems[1]);
+                Chart1.Series["Max"].Points.AddXY(iter, dataItems[1]);
+                Chart1.Series["Min"].Points.AddXY(iter, dataItems[0]);
                 Chart1.Series["Mean"].Points.AddXY(iter, dataItems[2]);
                // Chart1.Series["Progress"].Points[0].YValues[1] = dataItems[1];
                 //Chart1.Series["Progress"].Points[iter].YValues[2] = dataItems[2];
@@ -66,6 +87,7 @@
             Chart1.Page = this;
             HtmlTextWriter writer = new HtmlTextWriter(Page.Response.Output);
             Chart1.RenderControl(writer);
+           
 
      
             //// Populate series data
@@ -136,7 +158,20 @@
                         //Chart2.RenderControl(writer);
 
                      %>
-     
+             </td>
+    </tr>
+    <tr>
+        <td align="center">
+        <%
+            if (!String.IsNullOrEmpty(Model.StopMessage))
+            {
+                Response.Write("<div id='stopMessage'>" + Model.StopMessage + "</div>");
+            } 
+            
+             %>
+        </td>
+    </tr>
+    </table>
    
 </asp:Content>
 

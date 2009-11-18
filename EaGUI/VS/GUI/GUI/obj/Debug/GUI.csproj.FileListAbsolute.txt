@@ -12,3 +12,7 @@ C:\GAProject\ws\EaGUI\VS\GUI\GUI\bin\GUI.pdb
 C:\GAProject\ws\EaGUI\VS\GUI\GUI\obj\Debug\ResolveAssemblyReference.cache
 C:\GAProject\ws\EaGUI\VS\GUI\GUI\obj\Debug\GUI.dll
 C:\GAProject\ws\EaGUI\VS\GUI\GUI\obj\Debug\GUI.pdb
+C:\GAProject\ws\EaGUI\VS\GUI\GUI\bin\Spring.Core.pdb
+C:\GAProject\ws\EaGUI\VS\GUI\GUI\bin\Apache.NMS.ActiveMQ.pdb
+C:\GAProject\ws\EaGUI\VS\GUI\GUI\bin\Spring.Messaging.Nms.pdb
+C:\GAProject\ws\EaGUI\VS\GUI\GUI\bin\Apache.NMS.pdb
