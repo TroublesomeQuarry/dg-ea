@@ -14,8 +14,8 @@ public class EaServer {
 	}
 	
 	public void AddJob(String params, String jobName){
-		String paramsFilePath = "";
-		instances.put(jobName, new EaInstance(paramsFilePath,jobName,Util.GetSeed()));
+		
+		instances.put(jobName, new EaInstance(params,jobName,Util.GetSeed()));
 		System.out.println("starting1 instance ");
 		instances.get(jobName).spawnPlayThread();
 		System.out.println("starting2 instance ");

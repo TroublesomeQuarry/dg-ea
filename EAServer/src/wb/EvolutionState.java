@@ -113,19 +113,16 @@ public class EvolutionState {
 	public void finalStatistics(final CMAEvolutionStrategy cmaes) {
 
 		
-	//	Element finalStat = document.createElement("finalStat");
-
-
+		Element finalStat = document.createElement("finalStat");
+		finalStat.setAttribute("bestFittness", String.valueOf(cmaes.getBestEvaluationNumber()));
+		finalStat.setAttribute("bestIndividual", String.valueOf(Util.IndividualToString(cmaes.getBestX())));
 		
-	
-			
-	//	finalStat.setAttribute("bestFittness", String.valueOf(cmaes.getBestEvaluationNumber()));
-	//	finalStat.setAttribute("bestIndividual", String.valueOf(cmaes.getBestSolution().getFitness()));
+		String stopConditions = "";
+		for (String s : cmaes.stopConditions.getMessages())
+			stopConditions = "  " + s;
 		
-
-	
-		
-	//	document.getDocumentElement().appendChild(finalStat);
+		finalStat.setAttribute("stopConditions",stopConditions);
+		document.getDocumentElement().appendChild(finalStat);
 		
 	//	writeXmlFile(document, resultsFileName );
 	}	
