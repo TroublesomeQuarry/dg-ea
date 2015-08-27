@@ -1,0 +1,1 @@
+This project has a EA server and a website client
